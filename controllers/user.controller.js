@@ -34,5 +34,26 @@ class UserController {
       console.log("results are = ", result);
     });
   }
+
+  static async read(req, res) {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    try {
+      await client.connect();
+    } catch (e) {
+      console.error(e);
+    }
+    const db = client.db("moodyDb");
+    let id = req.params.user_id;
+
+    let userCursor = db.collection("User").find({ _id: id });
+
+    if (userCursor.hasNext()) {
+      let user = userCursor.next();
+      console.log("found user:", user);
+    } else {
+      console.warn("could not find user with id: ", id);
+    }
+  }
 }
 export default UserController;

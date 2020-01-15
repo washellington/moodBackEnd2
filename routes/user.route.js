@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/test", UserController.test);
 
 router.post("/create", UserController.create);
-// router.get("/read", UserController.read);
+router.get("/read", UserController.read);
 // router.post("/update", UserController.update);
 // router.delete("/delete", UserController.delete);
 
