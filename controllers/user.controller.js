@@ -1,6 +1,6 @@
 import User from "../models/user.model";
 import * as crypto from "crypto";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const uri =
   "mongodb+srv://moodyApi:WAS&amr13@cluster0-jndzm.gcp.mongodb.net/test?retryWrites=true&w=majority";
@@ -32,6 +32,7 @@ class UserController {
     db.collection("User").insertOne(user, (err, result) => {
       if (err) throw err;
       console.log("results are = ", result);
+      res.sendStatus(200);
     });
   }
 
@@ -44,16 +45,19 @@ class UserController {
       console.error(e);
     }
     const db = client.db("moodyDb");
-    let id = req.params.user_id;
+    let id = req.query.user_id;
 
-    let userCursor = db.collection("User").find({ _id: id });
+    let userCursor = db.collection("User").find({ _id: ObjectId(id) });
 
-    if (userCursor.hasNext()) {
-      let user = userCursor.next();
-      console.log("found user:", user);
-    } else {
-      console.warn("could not find user with id: ", id);
-    }
+    userCursor.hasNext().then(exist => {
+      if (exist) {
+        let user = userCursor.next();
+        console.log("found user:", user);
+      } else {
+        console.warn("could not find user with id: ", id);
+      }
+      res.sendStatus(200);
+    });
   }
 }
 export default UserController;
