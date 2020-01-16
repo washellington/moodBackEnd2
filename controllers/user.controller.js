@@ -1,6 +1,6 @@
 import User from "../models/user.model";
 import * as crypto from "crypto";
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient, ObjectId, $set } from "mongodb";
 
 const uri =
   "mongodb+srv://moodyApi:WAS&amr13@cluster0-jndzm.gcp.mongodb.net/test?retryWrites=true&w=majority";
@@ -45,19 +45,60 @@ class UserController {
       console.error(e);
     }
     const db = client.db("moodyDb");
-    let id = req.query.user_id;
+    let id = req.params.id;
 
-    let userCursor = db.collection("User").find({ _id: ObjectId(id) });
+    let user = await db.collection("User").findOne({ _id: ObjectId(id) });
 
-    userCursor.hasNext().then(exist => {
-      if (exist) {
-        let user = userCursor.next();
-        console.log("found user:", user);
-      } else {
-        console.warn("could not find user with id: ", id);
-      }
-      res.sendStatus(200);
-    });
+    if (user) {
+      console.log("found user:", user);
+    } else {
+      console.warn("could not find user with id: ", id);
+    }
+    res.sendStatus(200);
+  }
+
+  static async update(req, res) {
+    let userParams = {
+      firstName: req.body.first_name,
+      lastName: req.body.last_name
+    };
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    try {
+      await client.connect();
+    } catch (e) {
+      console.error(e);
+    }
+    const db = client.db("moodyDb");
+    let id = req.params.id;
+
+    let userResult = await db
+      .collection("User")
+      .updateOne({ _id: ObjectId(id) }, { $set: userParams });
+
+    console.log("updated user result :", userResult);
+
+    res.sendStatus(200);
+  }
+
+  static async delete(req, res) {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    try {
+      await client.connect();
+    } catch (e) {
+      console.error(e);
+    }
+    const db = client.db("moodyDb");
+    let id = req.params.id;
+
+    let userResult = await db
+      .collection("User")
+      .deleteOne({ _id: ObjectId(id) });
+
+    console.log("updated user result :", userResult);
+
+    res.sendStatus(200);
   }
 }
 export default UserController;
