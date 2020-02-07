@@ -52,11 +52,76 @@ var UserController = function () {
       };
       user.salt = crypto.randomBytes(16).toString("base64");
       var hash = crypto.createHmac("sha512", user.salt).update(user.password).digest("base64");
-      user.password = user.salt + "$" + hash;
+      user.password = hash;
       db.collection("User").insertOne(user, function (err, result) {
         if (err) throw err;
         console.log("results are = ", result);
+        res.sendStatus(200);
       });
+    }
+  }, {
+    key: "read",
+    value: async function read(req, res) {
+      var client = new _mongodb.MongoClient(uri, { useUnifiedTopology: true });
+
+      try {
+        await client.connect();
+      } catch (e) {
+        console.error(e);
+      }
+      var db = client.db("moodyDb");
+      var id = req.params.id;
+
+      var user = await db.collection("User").findOne({ _id: (0, _mongodb.ObjectId)(id) });
+
+      if (user) {
+        console.log("found user:", user);
+      } else {
+        console.warn("could not find user with id: ", id);
+      }
+      res.sendStatus(200);
+    }
+  }, {
+    key: "update",
+    value: async function update(req, res) {
+      var userParams = {
+        firstName: req.body.first_name,
+        lastName: req.body.last_name
+      };
+      var client = new _mongodb.MongoClient(uri, { useUnifiedTopology: true });
+
+      try {
+        await client.connect();
+      } catch (e) {
+        console.error(e);
+      }
+      var db = client.db("moodyDb");
+      var id = req.params.id;
+
+      var userResult = await db.collection("User").updateOne({ _id: (0, _mongodb.ObjectId)(id) }, { $set: userParams });
+
+      console.log("updated user result :", userResult);
+
+      res.sendStatus(200);
+    }
+  }, {
+    key: "delete",
+    value: async function _delete(req, res) {
+      var client = new _mongodb.MongoClient(uri, { useUnifiedTopology: true });
+
+      try {
+        await client.connect();
+      } catch (e) {
+        console.error(e);
+      }
+      var db = client.db("moodyDb");
+      var id = req.params.id;
+
+      var userResult = await db.collection("User").deleteOne({ _id: (0, _mongodb.ObjectId)(id) });
+
+      console.log("updated user result :", userResult);
+
+      res.sendStatus(200);
     }
   }]);
 

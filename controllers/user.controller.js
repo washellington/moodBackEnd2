@@ -28,7 +28,7 @@ class UserController {
       .createHmac("sha512", user.salt)
       .update(user.password)
       .digest("base64");
-    user.password = user.salt + "$" + hash;
+    user.password = hash;
     db.collection("User").insertOne(user, (err, result) => {
       if (err) throw err;
       console.log("results are = ", result);
