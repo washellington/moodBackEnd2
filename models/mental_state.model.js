@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 
 const uri =
-  "mongodb+srv://moodyApi:WAS&amr13@cluster0-jndzm.gcp.mongodb.net/test?retryWrites=true&w=majority";
+  "mongodb+srv://moodyApi:nsusga06@cluster0-b4mio.gcp.mongodb.net/test?retryWrites=true&w=majority";
 
 async function initialize() {
   const client = new MongoClient(uri, { useUnifiedTopology: true });
@@ -21,15 +21,15 @@ async function initialize() {
             description: "must be number and is required"
           },
           mood_type: {
-            bsonType: "integer",
+            bsonType: "number",
             description: "must be a number and is required"
           },
           date_created: {
-            bsonType: "integer",
-            description: "must be a unix timestamp integer and is required"
+            bsonType: "number",
+            description: "must be a unix timestamp number and is required"
           },
           user: {
-            bsonType: "integer",
+            bsonType: "number",
             description: "must be a number and is required"
           },
           notes: {

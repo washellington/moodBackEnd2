@@ -2,7 +2,7 @@ import * as crypto from "crypto";
 import { MongoClient, ObjectId, $set } from "mongodb";
 
 const uri =
-  "mongodb+srv://moodyApi:WAS&amr13@cluster0-jndzm.gcp.mongodb.net/test?retryWrites=true&w=majority";
+  "mongodb+srv://moodyApi:nsusga06@cluster0-b4mio.gcp.mongodb.net/test?retryWrites=true&w=majority";
 
 export default class VerifyUserMiddleware {
   static async isPasswordAndUserMatch(req, res, next) {
