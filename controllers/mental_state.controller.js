@@ -42,12 +42,12 @@ class MentalStateController {
     const db = client.db("moodyDb");
     let id = req.params.id;
 
-    let user = await db.collection(COLLECTION).findOne({ _id: ObjectId(id) });
+    let model = await db.collection(COLLECTION).findOne({ _id: ObjectId(id) });
 
-    if (user) {
-      console.log("found mental_state:", user);
+    if (model) {
+      console.log("found mental_state:", model);
     } else {
-      console.warn("could not find user with id: ", id);
+      console.warn("could not find model with id: ", id);
     }
     res.sendStatus(200);
   }
@@ -94,7 +94,7 @@ class MentalStateController {
       .collection(COLLECTION)
       .deleteOne({ _id: ObjectId(id) });
 
-    console.log("updated user result :", results);
+    console.log("updated model result :", results);
 
     res.sendStatus(200);
   }
