@@ -3,3 +3,5 @@ class MentalStateController {
     res.send("Greetings from the Test controller!");
   }
 }
+
+export default MentalStateController;
