@@ -15,10 +15,14 @@ export default class VerifyUserMiddleware {
     const db = client.db("moodyDb");
 
     db.collection("User")
-      .findByEmail(req.body.email)
+      .findOne({ email: req.body.email })
+      .catch(err => {
+        console.warn(err);
+      })
       .then(user => {
-        if (!user.length()) {
+        if (!user || !user.length()) {
           res.sendStatus(404);
+          console.warn("user not found");
         } else {
           let user = user[0];
           let password = user.password;
