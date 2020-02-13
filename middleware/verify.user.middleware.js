@@ -17,10 +17,11 @@ export default class VerifyUserMiddleware {
     db.collection("User")
       .findOne({ email: req.body.email })
       .then(user => {
-        if (!user || !user.length()) {
+        console.log(`User = `, user);
+
+        if (!user) {
           res.sendStatus(204);
         } else {
-          let user = user[0];
           let password = user.password;
           let salt = user.salt;
           let hash = crypto
