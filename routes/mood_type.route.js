@@ -11,4 +11,9 @@ router.get("/", [
   MoodTypeController.index
 ]);
 
+router.get("/default", [
+  VerifyUserMiddleware.validJWTNeeded,
+  MoodTypeController.getDefault
+]);
+
 export default router;

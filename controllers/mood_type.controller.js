@@ -34,6 +34,26 @@ class MoodTypeController {
     }
     res.sendStatus(200);
   }
+
+  static async getDefault(req, res) {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    await client.connect();
+    console.log("connected");
+    const db = client.db("moodyDb");
+
+    let model = await db
+      .collection(COLLECTION)
+      .findOne({ mood_type: "emotion" });
+
+    if (model) {
+      console.log("results are = ", model);
+      res.status(200).send(model);
+    } else {
+      console.log("could not find any models");
+      res.status(200).send({ err: "Could not find default mood type" });
+    }
+  }
 }
 
 export default MoodTypeController;
