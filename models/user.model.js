@@ -14,15 +14,15 @@ async function initialize() {
     validator: {
       $jsonSchema: {
         bsonType: "object",
-        required: ["firstName", "lastName", "email", "password"],
+        required: ["email", "password"],
         properties: {
           firstName: {
             bsonType: "string",
-            description: "must be a string and is required"
+            description: "must be a string"
           },
           lastName: {
             bsonType: "string",
-            description: "must be a string and is required"
+            description: "must be a string "
           },
           email: {
             bsonType: "string",

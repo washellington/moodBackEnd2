@@ -47,16 +47,22 @@ var UserController = function () {
         email: req.body.email,
         password: req.body.password,
         salt: "",
-        firstName: req.body.first_name,
-        lastName: req.body.last_name
+        firstName: req.body.first_name || "",
+        lastName: req.body.last_name || ""
       };
+      console.log(user);
       user.salt = crypto.randomBytes(16).toString("base64");
       var hash = crypto.createHmac("sha512", user.salt).update(user.password).digest("base64");
+      console.log(hash);
       user.password = hash;
       db.collection("User").insertOne(user, function (err, result) {
-        if (err) throw err;
-        console.log("results are = ", result);
-        res.sendStatus(200);
+        if (err) {
+          console.error(err);
+          res.sendStatus(500);
+        } else {
+          console.log("results are = ", result);
+          res.sendStatus(200);
+        }
       });
     }
   }, {

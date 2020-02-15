@@ -1,6 +1,6 @@
 import * as crypto from "crypto";
 import * as jwt from "jsonwebtoken";
-const jwtSecret = "jwtS3CR3TIsF1nallyHere";
+export const jwtSecret = "jwtS3CR3TIsF1nallyHere";
 class AuthorizationController {
   static login(req, res) {
     try {
@@ -11,14 +11,17 @@ class AuthorizationController {
         .update(refreshId)
         .digest("base64");
       req.body.refreshKey = salt;
+      console.log(req.body);
       let token = jwt.sign(req.body, jwtSecret);
       let b = new Buffer(hash);
       let refresh_token = b.toString("base64");
-      res
-        .sendStatus(201)
-        .send({ accessToken: token, refreshToken: refresh_token });
+      res.status(201).send({
+        token,
+        refreshToken: refresh_token,
+        userId: req.body.userId
+      });
     } catch (err) {
-      res.sendStatus(500).send({ errors: err });
+      res.status(500).send({ errors: err });
     }
   }
 }

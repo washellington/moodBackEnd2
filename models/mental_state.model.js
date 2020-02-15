@@ -14,23 +14,27 @@ async function initialize() {
     validator: {
       $jsonSchema: {
         bsonType: "object",
-        required: ["rating", "mood_type", "date_created", "user"],
+        required: ["rating", "mood_type", "date_created", "entry_date", "user"],
         properties: {
           rating: {
             bsonType: "number",
             description: "must be number and is required"
           },
           mood_type: {
-            bsonType: "number",
-            description: "must be a number and is required"
+            bsonType: "string",
+            description: "must be object id of the mood type and is required"
           },
           date_created: {
             bsonType: "number",
             description: "must be a unix timestamp number and is required"
           },
-          user: {
+          entry_date: {
             bsonType: "number",
-            description: "must be a number and is required"
+            description: "must be a unix timestamp number and is required"
+          },
+          user: {
+            bsonType: "string",
+            description: "must be a object id of the user and is required"
           },
           notes: {
             bsonType: "string"
