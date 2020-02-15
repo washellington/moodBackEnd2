@@ -52,6 +52,32 @@ class MentalStateController {
     res.sendStatus(200);
   }
 
+  static async recent(req, res) {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    await client.connect();
+    console.log("connected");
+    const db = client.db("moodyDb");
+
+    db.collection(COLLECTION)
+      .find({ user: req.body.userId }, { limit: 5 })
+      .sort({
+        entry_date: 1
+      })
+      .toArray((error, results) => {
+        console.log(error, results);
+        let models = results;
+        if (models) {
+          console.log("results are = ", models);
+        } else {
+          console.log("could not find any models");
+        }
+        if (error) res.status(500).send(error);
+        else res.status(200).send(models);
+        console.log("mental state recent entries are:", models);
+      });
+  }
+
   static async update(req, res) {
     let model = {
       rating: parseInt(req.body.rating),
