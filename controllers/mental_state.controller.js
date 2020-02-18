@@ -19,14 +19,15 @@ class MentalStateController {
     const db = client.db("moodyDb");
     let model = {
       rating: parseInt(req.body.rating),
-      mood_type: parseInt(req.body.mood_type_id),
+      mood_type: req.body.mood_type,
       date_created: new Date().getTime(),
-      user: parseInt(req.body.user_id),
-      notes: req.body.notes
+      user: req.body.user,
+      notes: req.body.notes,
+      entry_date: req.body.entry_date
     };
     console.log(model);
     db.collection(COLLECTION).insertOne(model, (err, result) => {
-      if (err) throw err;
+      if (err) res.status(500).send(err);
       console.log("results are = ", result);
       res.sendStatus(200);
     });
@@ -60,7 +61,10 @@ class MentalStateController {
     const db = client.db("moodyDb");
 
     db.collection(COLLECTION)
-      .find({ user: req.body.userId }, { limit: 5 })
+      .find(
+        { user: req.body.userId, mood_type: req.body.mood_type_id },
+        { limit: 5 }
+      )
       .sort({
         entry_date: 1
       })
@@ -81,9 +85,9 @@ class MentalStateController {
   static async update(req, res) {
     let model = {
       rating: parseInt(req.body.rating),
-      mood_type: parseInt(req.body.mood_type_id),
+      mood_type: ObjectId(req.body.mood_type_id),
       date_created: new Date().getTime(),
-      user: parseInt(req.body.user_id),
+      user: ObjectId(req.body.user_id),
       notes: req.body.notes
     };
     const client = new MongoClient(uri, { useUnifiedTopology: true });

@@ -57,7 +57,7 @@ export default class VerifyUserMiddleware {
           return res.status(401).send();
         } else {
           req.jwt = jwt.verify(authorization[1], jwtSecret);
-          req.userId = jwt.userId;
+          req.userId = req.jwt.userId;
           return next();
         }
       } catch (err) {

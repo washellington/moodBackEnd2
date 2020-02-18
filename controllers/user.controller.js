@@ -63,6 +63,11 @@ class UserController {
     res.sendStatus(200);
   }
 
+  static info(req, res) {
+    console.log(req.userId, req.jwt);
+    res.send({ userId: req.userId });
+  }
+
   static async update(req, res) {
     let userParams = {
       firstName: req.body.first_name,

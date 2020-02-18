@@ -1,4 +1,5 @@
 import * as express from "express";
+import VerifyUserMiddleware from "../middleware/verify.user.middleware";
 import UserController from "../controllers/user.controller";
 const router = express.Router();
 
@@ -6,6 +7,7 @@ const router = express.Router();
 router.get("/test", UserController.test);
 
 router.put("/", UserController.create);
+router.get("/info", [VerifyUserMiddleware.validJWTNeeded, UserController.info]);
 router.get("/:id", UserController.read);
 router.post("/:id", UserController.update);
 router.delete("/:id", UserController.delete);

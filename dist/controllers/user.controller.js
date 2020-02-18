@@ -88,6 +88,12 @@ var UserController = function () {
       res.sendStatus(200);
     }
   }, {
+    key: "info",
+    value: function info(req, res) {
+      console.log(req.userId, req.jwt);
+      res.send({ userId: req.userId });
+    }
+  }, {
     key: "update",
     value: async function update(req, res) {
       var userParams = {
