@@ -59,10 +59,10 @@ class MentalStateController {
     await client.connect();
     console.log("connected");
     const db = client.db("moodyDb");
-
+    console.log(req.userId, req.query.mood_type_id);
     db.collection(COLLECTION)
       .find(
-        { user: req.body.userId, mood_type: req.body.mood_type_id },
+        { user: req.userId, mood_type: req.query.mood_type_id },
         { limit: 5 }
       )
       .sort({
