@@ -18,7 +18,9 @@ class AuthorizationController {
       res.status(201).send({
         token,
         refreshToken: refresh_token,
-        userId: req.body.userId
+        userId: req.body.userId,
+        email: req.body.email,
+        fullname: req.body.name
       });
     } catch (err) {
       res.status(500).send({ errors: err });

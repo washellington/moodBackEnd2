@@ -76,7 +76,7 @@ var UserController = function () {
         console.error(e);
       }
       var db = client.db("moodyDb");
-      var id = req.params.id;
+      var id = req.params.id || req.userId;
 
       var user = await db.collection("User").findOne({ _id: (0, _mongodb.ObjectId)(id) });
 
@@ -85,13 +85,18 @@ var UserController = function () {
       } else {
         console.warn("could not find user with id: ", id);
       }
-      res.sendStatus(200);
+      res.status(200).send({
+        userId: user._id,
+        email: user.email,
+        fullName: user.firstName + " " + user.lastName
+      });
     }
   }, {
     key: "info",
     value: function info(req, res) {
       console.log(req.userId, req.jwt);
-      res.send({ userId: req.userId });
+      //res.send({ userId: req.userId });
+      this.read(req, res);
     }
   }, {
     key: "update",

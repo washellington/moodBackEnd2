@@ -51,7 +51,7 @@ class UserController {
       console.error(e);
     }
     const db = client.db("moodyDb");
-    let id = req.params.id;
+    let id = req.params.id || req.userId;
 
     let user = await db.collection("User").findOne({ _id: ObjectId(id) });
 
@@ -60,12 +60,17 @@ class UserController {
     } else {
       console.warn("could not find user with id: ", id);
     }
-    res.sendStatus(200);
+    res.status(200).send({
+      userId: user._id,
+      email: user.email,
+      fullName: `${user.firstName} ${user.lastName}`
+    });
   }
 
   static info(req, res) {
     console.log(req.userId, req.jwt);
-    res.send({ userId: req.userId });
+    //res.send({ userId: req.userId });
+    this.read(req, res);
   }
 
   static async update(req, res) {
