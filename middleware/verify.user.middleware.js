@@ -50,6 +50,7 @@ export default class VerifyUserMiddleware {
   }
 
   static validJWTNeeded(req, res, next) {
+    console.log("validJWTNeeded");
     if (req.headers["authorization"]) {
       try {
         let authorization = req.headers["authorization"].split(" ");

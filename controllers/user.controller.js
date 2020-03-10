@@ -1,6 +1,7 @@
 import User from "../models/user.model";
 import * as crypto from "crypto";
 import { MongoClient, ObjectId, $set } from "mongodb";
+import MentalStateController from "./mental_state.controller";
 
 const uri =
   "mongodb+srv://moodyApi:nsusga06@cluster0-b4mio.gcp.mongodb.net/test?retryWrites=true&w=majority";
@@ -70,7 +71,7 @@ class UserController {
   static info(req, res) {
     console.log(req.userId, req.jwt);
     //res.send({ userId: req.userId });
-    this.read(req, res);
+    UserController.read(req, res);
   }
 
   static async update(req, res) {

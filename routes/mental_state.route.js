@@ -11,6 +11,10 @@ router.get("/recent", [
   VerifyUserMiddleware.validJWTNeeded,
   MentalStateController.recent
 ]);
+router.get("/overview", [
+  VerifyUserMiddleware.validJWTNeeded,
+  MentalStateController.overviewInformation
+]);
 router.get("/:id", MentalStateController.read);
 router.post("/:id", MentalStateController.update);
 router.delete("/:id", MentalStateController.delete);
