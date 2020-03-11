@@ -84,6 +84,35 @@ class MentalStateController {
       });
   }
 
+  static async getMonthEntries(req, res) {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    await client.connect();
+    console.log("getMonthEntries: connected");
+    const db = client.db("moodyDb");
+    console.log(req.userId, req.query.mood_type_id);
+    db.collection(COLLECTION)
+      .find({
+        user: req.userId,
+        mood_type: req.query.mood_type_id,
+        entry_date: {
+          $gte: moment({ month: req.query.month, day: 1, year: req.query.year })
+            .startOf("month")
+            .valueOf(),
+          $lte: moment({ month: req.query.month, day: 1, year: req.query.year })
+            .endOf("month")
+            .valueOf()
+        }
+      })
+      .toArray((error, results) => {
+        console.log(error, results);
+        let models = results;
+        if (error) res.status(500).send(error);
+        else res.status(200).send({ mental_states: models });
+        console.log("mental state by month entries are:", models);
+      });
+  }
+
   static async overviewInformation(req, res) {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
 
@@ -119,7 +148,7 @@ class MentalStateController {
               let aggregateResults = x[0];
               res.status(200).send({
                 daysMissed: totalDays - aggregateResults.count,
-                averageMood: aggregateResults.averageMood,
+                averageMood: Math.round(aggregateResults.averageMood),
                 daysLogged: aggregateResults.count
               });
             });
