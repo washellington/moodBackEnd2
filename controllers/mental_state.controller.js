@@ -22,7 +22,7 @@ class MentalStateController {
       rating: parseInt(req.body.rating),
       mood_type: req.body.mood_type,
       date_created: new Date().getTime(),
-      user: req.body.user,
+      user: req.userId,
       notes: req.body.notes,
       entry_date: req.body.entry_date
     };

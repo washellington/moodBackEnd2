@@ -6,7 +6,10 @@ const router = express.Router();
 // a simple test url to check that all of our files are communicating correctly.
 router.get("/test", MentalStateController.test);
 
-router.put("/", MentalStateController.create);
+router.put("/", [
+  VerifyUserMiddleware.validJWTNeeded,
+  MentalStateController.create
+]);
 router.get("/recent", [
   VerifyUserMiddleware.validJWTNeeded,
   MentalStateController.recent
