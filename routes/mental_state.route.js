@@ -24,6 +24,9 @@ router.get("/month", [
 ]);
 router.get("/:id", MentalStateController.read);
 router.post("/:id", MentalStateController.update);
-router.delete("/:id", MentalStateController.delete);
+router.delete("/:id", [
+  VerifyUserMiddleware.validJWTNeeded,
+  MentalStateController.delete
+]);
 
 export default router;
