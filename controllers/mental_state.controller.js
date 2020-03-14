@@ -67,9 +67,7 @@ class MentalStateController {
         { user: req.userId, mood_type: req.query.mood_type_id },
         { limit: 5 }
       )
-      .sort({
-        entry_date: 1
-      })
+      .sort({ entry_date: -1 })
       .toArray((error, results) => {
         console.log(error, results);
         let models = results;
@@ -201,7 +199,7 @@ class MentalStateController {
 
     console.log("updated model result :", results);
 
-    res.sendStatus(200);
+    res.status(200).send(results);
   }
 }
 
