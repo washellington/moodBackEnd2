@@ -1,7 +1,12 @@
 import User from "../models/user.model";
+import PasswordRecovery from "../models/password_recovery.model";
 import * as crypto from "crypto";
 import { MongoClient, ObjectId, $set } from "mongodb";
 import MentalStateController from "./mental_state.controller";
+import { v4 as uuidv4 } from "uuid";
+import moment from "moment";
+
+const sgMail = require("@sendgrid/mail");
 
 const uri =
   "mongodb+srv://moodyApi:nsusga06@cluster0-b4mio.gcp.mongodb.net/test?retryWrites=true&w=majority";
@@ -43,6 +48,64 @@ class UserController {
     });
   }
 
+  static async reset_password(req, res) {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    await client.connect();
+    const db = client.db("moodyDb");
+    let reset_password = {
+      email: req.body.email,
+      password: req.body.password,
+      token: req.body.token
+    };
+
+    let passwordRecoveryResults = await db
+      .collection("PasswordRecovery")
+      .find({ email: reset_password.email })
+      .sort({ expiration_date: -1 })
+      .toArray();
+    console.log(passwordRecoveryResults[0]);
+
+    let recoveryHash = crypto
+      .createHmac("sha512", reset_password.email)
+      .update(reset_password.token)
+      .digest("base64");
+
+    if (passwordRecoveryResults[0].hashed_token != recoveryHash) {
+      res.status(500).send({
+        err: "Could not validate token"
+      });
+      return;
+    }
+    if (Date.now() > passwordRecoveryResults[0].expiration_date) {
+      res.status(500).send({
+        err: "Token expired"
+      });
+      return;
+    }
+    let newPassword = {};
+    newPassword.salt = crypto.randomBytes(16).toString("base64");
+    let hash = crypto
+      .createHmac("sha512", newPassword.salt)
+      .update(reset_password.password)
+      .digest("base64");
+    newPassword.password = hash;
+    db.collection("User").updateOne(
+      { email: reset_password.email },
+      { $set: newPassword },
+      {},
+      (err, results) => {
+        if (err) {
+          res.status(500).send({
+            err: "Could not update password"
+          });
+        } else {
+          res.sendStatus(200);
+        }
+      }
+    );
+  }
+
   static async read(req, res) {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
 
@@ -66,6 +129,60 @@ class UserController {
       email: user.email,
       fullName: `${user.firstName} ${user.lastName}`
     });
+  }
+
+  static async recover_account(req, res) {
+    const client = new MongoClient(uri, { useUnifiedTopology: true });
+
+    try {
+      await client.connect();
+    } catch (e) {
+      console.error(e);
+    }
+    const db = client.db("moodyDb");
+    let email = req.body.email;
+
+    let user = await db.collection("User").findOne({ email: email });
+
+    if (user) {
+      console.log("found user:", user);
+      let token = uuidv4();
+      let hash = crypto
+        .createHmac("sha512", email)
+        .update(token)
+        .digest("base64");
+      console.log(hash);
+      let date_requested = new Date();
+      let password_recovery = {
+        email,
+        hashed_token: hash,
+        date_requested: date_requested.getTime(),
+        expiration_date: moment(date_requested)
+          .add(10, "minute")
+          .valueOf()
+      };
+      db.collection("PasswordRecovery").insertOne(
+        password_recovery,
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            res.status(500).send({
+              err
+            });
+          } else {
+            console.log("results are = ", result);
+            //send email with token
+            UserController.sendEmail(email, token);
+            res.sendStatus(200);
+          }
+        }
+      );
+    } else {
+      console.warn("could not find user with emai: ", email);
+      res.status(500).send({
+        err: "Could not find requested user"
+      });
+    }
   }
 
   static info(req, res) {
@@ -116,6 +233,34 @@ class UserController {
     console.log("updated user result :", userResult);
 
     res.sendStatus(200);
+  }
+
+  static sendEmail(email, token) {
+    sgMail.setApiKey(
+      "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    "
+    );
+    const msg = {
+      to: process.env.MOODY_ENV == "prod" ? email : "washellington@gmail.com",
+      from: "support@moody.com",
+      subject: "Reset Password Request",
+      text: `Here is the link to reset your password. Note that the link will expire in 10 minutes. ${UserController.generateLink(
+        token
+      )}`,
+      html: `Here is the link to reset your password. 
+      <br>
+      <strong>Note that the link will expire in 10 minutes.</strong>
+      <br>
+      <a href='${UserController.generateLink(token)}'>Reset Password</a>`
+    };
+    sgMail.send(msg);
+  }
+
+  static generateLink(token) {
+    if (process.env.MOODY_ENV == "prod") {
+      return `moody.theconsciousobserver.com/reset_password?token=${token}`;
+    } else {
+      return `http://localhost:3000/reset_password?token=${token}`;
+    }
   }
 }
 export default UserController;

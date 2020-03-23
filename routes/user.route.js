@@ -7,6 +7,8 @@ const router = express.Router();
 router.get("/test", UserController.test);
 
 router.put("/", UserController.create);
+router.post("/recover_account", UserController.recover_account);
+router.put("/reset_password", UserController.reset_password);
 router.get("/info", [VerifyUserMiddleware.validJWTNeeded, UserController.info]);
 router.get("/:id", [VerifyUserMiddleware.validJWTNeeded, UserController.read]);
 router.post("/:id", UserController.update);

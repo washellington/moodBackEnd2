@@ -42,7 +42,7 @@ export default class VerifyUserMiddleware {
             return next();
           } else {
             return res
-              .sendStatus(400)
+              .status(400)
               .send({ errors: ["Invalid email or password"] });
           }
         }
@@ -62,7 +62,7 @@ export default class VerifyUserMiddleware {
           return next();
         }
       } catch (err) {
-        return res.status(403).send();
+        return res.status(403).send({ err: "Username could not be validated" });
       }
     } else {
       return res.status(401).send();

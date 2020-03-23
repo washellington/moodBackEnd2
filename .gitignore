@@ -1,3 +1,4 @@
 node_modules/
 built/
-dist/
+dist/sendgrid.env
+sendgrid.env
