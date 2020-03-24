@@ -236,9 +236,7 @@ class UserController {
   }
 
   static sendEmail(email, token) {
-    sgMail.setApiKey(
-      "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    "
-    );
+    sgMail.setApiKey(process.env.SENDGRID_API);
     const msg = {
       to: process.env.MOODY_ENV == "prod" ? email : "washellington@gmail.com",
       from: "support@moody.com",
