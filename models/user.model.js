@@ -1,7 +1,6 @@
 import { MongoClient } from "mongodb";
 
-const uri =
-  "mongodb+srv://moodyApi:nsusga06@cluster0-b4mio.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_CONNECTION_STRING;
 
 async function initialize() {
   const client = new MongoClient(uri, { useUnifiedTopology: true });

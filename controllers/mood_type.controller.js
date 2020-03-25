@@ -1,8 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb";
 import MoodType from "../models/mood_type.model";
 
-const uri =
-  "mongodb+srv://moodyApi:nsusga06@cluster0-b4mio.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_CONNECTION_STRING;
 
 const COLLECTION = "MoodType";
 

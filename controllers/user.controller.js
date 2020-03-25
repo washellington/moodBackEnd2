@@ -8,8 +8,7 @@ import moment from "moment";
 
 const sgMail = require("@sendgrid/mail");
 
-const uri =
-  "mongodb+srv://moodyApi:nsusga06@cluster0-b4mio.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_CONNECTION_STRING;
 
 //Simple version, without validation or sanitation
 
@@ -238,8 +237,8 @@ class UserController {
   static sendEmail(email, token) {
     sgMail.setApiKey(process.env.SENDGRID_API);
     const msg = {
-      to: process.env.MOODY_ENV == "prod" ? email : "washellington@gmail.com",
-      from: "support@moody.com",
+      to: process.env.MOODY_ENV == "prod" ? email : process.env.DEV_EMAIL,
+      from: process.env.SUPPORT_EMAIL_ADDRESS,
       subject: "Reset Password Request",
       text: `Here is the link to reset your password. Note that the link will expire in 10 minutes. ${UserController.generateLink(
         token

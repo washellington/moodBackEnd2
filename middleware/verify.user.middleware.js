@@ -3,8 +3,7 @@ import { MongoClient, ObjectId, $set } from "mongodb";
 import { jwtSecret } from "../controllers/authorization.controller";
 import * as jwt from "jsonwebtoken";
 
-const uri =
-  "mongodb+srv://moodyApi:nsusga06@cluster0-b4mio.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_CONNECTION_STRING;
 
 export default class VerifyUserMiddleware {
   static async isPasswordAndUserMatch(req, res, next) {

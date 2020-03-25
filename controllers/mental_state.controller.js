@@ -2,8 +2,7 @@ import { MongoClient, ObjectId } from "mongodb";
 import MentalState from "../models/mental_state.model";
 import moment from "moment";
 
-const uri =
-  "mongodb+srv://moodyApi:nsusga06@cluster0-b4mio.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_CONNECTION_STRING;
 
 const COLLECTION = "MentalState";
 

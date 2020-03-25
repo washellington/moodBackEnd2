@@ -4,6 +4,10 @@ import MentalStateRoute from "./routes/mental_state.route";
 import MoodTypeRoute from "./routes/mood_type.route";
 import AuthRoute from "./routes/authorization.route";
 import Cors from "cors";
+const 
+
+const dotenv = require("dotenv");
+dotenv.config();
 
 const app = express();
 
@@ -15,7 +19,7 @@ app.use("/mental_state", MentalStateRoute);
 app.use("/mood_type", MoodTypeRoute);
 app.use("/authorization", AuthRoute);
 
-let port = 1234;
+let port = process.env.EXPRESS_PORT;
 app.listen(port, () => {
   console.log("Server is up and running on port numner " + port);
 });
