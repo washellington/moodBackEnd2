@@ -4,3 +4,4 @@ built/
 dist/sendgrid.env
 sendgrid.env
 dist/controllers/user.controller.js
+.env
