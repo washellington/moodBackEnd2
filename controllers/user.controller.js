@@ -39,7 +39,9 @@ class UserController {
     db.collection("User").insertOne(user, (err, result) => {
       if (err) {
         console.error(err);
-        res.sendStatus(500);
+        res.status(500).send({
+          err: "Error saving user"
+        });
       } else {
         console.log("results are = ", result);
         res.sendStatus(200);
@@ -120,14 +122,17 @@ class UserController {
 
     if (user) {
       console.log("found user:", user);
+      res.status(200).send({
+        userId: user._id,
+        email: user.email,
+        fullName: `${user.firstName} ${user.lastName}`
+      });
     } else {
       console.warn("could not find user with id: ", id);
+      res.status(500).send({
+        err: "Could not find user"
+      });
     }
-    res.status(200).send({
-      userId: user._id,
-      email: user.email,
-      fullName: `${user.firstName} ${user.lastName}`
-    });
   }
 
   static async recover_account(req, res) {

@@ -250,10 +250,10 @@ var UserController = function () {
   }, {
     key: "sendEmail",
     value: function sendEmail(email, token) {
-      sgMail.setApiKey("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    ");
+      sgMail.setApiKey(process.env.SENDGRID_API);
       var msg = {
-        to: process.env.MOODY_ENV == "prod" ? email : "washellington@gmail.com",
-        from: "support@moody.com",
+        to: process.env.MOODY_ENV == "prod" ? email : process.env.DEV_EMAIL,
+        from: process.env.SUPPORT_EMAIL_ADDRESS,
         subject: "Reset Password Request",
         text: "Here is the link to reset your password. Note that the link will expire in 10 minutes. " + UserController.generateLink(token),
         html: "Here is the link to reset your password. \n      <br>\n      <strong>Note that the link will expire in 10 minutes.</strong>\n      <br>\n      <a href='" + UserController.generateLink(token) + "'>Reset Password</a>"

@@ -23,7 +23,8 @@ class AuthorizationController {
         fullname: req.body.name
       });
     } catch (err) {
-      res.status(500).send({ errors: err });
+      console.warn(err);
+      res.status(500).send({ err: "Could not login user" });
     }
   }
 }

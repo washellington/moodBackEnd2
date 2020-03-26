@@ -28,10 +28,14 @@ class MoodTypeController {
 
     if (models) {
       console.log("results are = ", models);
+      res.sendStatus(200);
     } else {
       console.log("could not find any models");
+
+      res.status(500).send({
+        err: "Could not find any models"
+      });
     }
-    res.sendStatus(200);
   }
 
   static async getDefault(req, res) {
@@ -50,7 +54,7 @@ class MoodTypeController {
       res.status(200).send(model);
     } else {
       console.log("could not find any models");
-      res.status(200).send({ err: "Could not find default mood type" });
+      res.status(500).send({ err: "Could not find default mood type" });
     }
   }
 }

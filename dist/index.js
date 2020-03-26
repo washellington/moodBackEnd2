@@ -26,6 +26,11 @@ var _cors2 = _interopRequireDefault(_cors);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var dotenv = require("dotenv");
+dotenv.config();
+
+console.log(process.env.EXPRESS_PORT);
+
 var app = (0, _express2.default)();
 
 app.use((0, _cors2.default)());
@@ -36,7 +41,7 @@ app.use("/mental_state", _mental_state2.default);
 app.use("/mood_type", _mood_type2.default);
 app.use("/authorization", _authorization2.default);
 
-var port = 1234;
+var port = process.env.EXPRESS_PORT;
 app.listen(port, function () {
   console.log("Server is up and running on port numner " + port);
 });

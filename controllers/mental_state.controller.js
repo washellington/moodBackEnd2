@@ -27,11 +27,17 @@ class MentalStateController {
     };
     console.log(model);
     db.collection(COLLECTION).insertOne(model, (err, result) => {
-      if (err) res.status(500).send(err);
-      console.log("results are = ", result);
-      res.sendStatus(200);
+      if (err) {
+        res.status(500).send({
+          err: "Could not create entry"
+        });
+      } else {
+        console.log("results are = ", result);
+        res.sendStatus(200);
+      }
     });
   }
+
   static async read(req, res) {
     const client = new MongoClient(uri, { useUnifiedTopology: true });
 
@@ -48,10 +54,13 @@ class MentalStateController {
 
     if (model) {
       console.log("found mental_state:", model);
+      res.sendStatus(200);
     } else {
       console.warn("could not find model with id: ", id);
+      res.status(500).send({
+        err: "Can not find entry"
+      });
     }
-    res.sendStatus(200);
   }
 
   static async recent(req, res) {
@@ -75,9 +84,15 @@ class MentalStateController {
         } else {
           console.log("could not find any models");
         }
-        if (error) res.status(500).send(error);
-        else res.status(200).send(models);
-        console.log("mental state recent entries are:", models);
+        if (error) {
+          console.warn(error);
+          res.status(500).send({
+            err: "Could not find any recent entries"
+          });
+        } else {
+          res.status(200).send(models);
+          console.log("mental state recent entries are:", models);
+        }
       });
   }
 
@@ -104,9 +119,15 @@ class MentalStateController {
       .toArray((error, results) => {
         console.log(error, results);
         let models = results;
-        if (error) res.status(500).send(error);
-        else res.status(200).send({ mental_states: models });
-        console.log("mental state by month entries are:", models);
+        if (error) {
+          console.warn(error);
+          res.status(500).send({
+            err: "Could not get month entries"
+          });
+        } else {
+          res.status(200).send({ mental_states: models });
+          console.log("mental state by month entries are:", models);
+        }
       });
   }
 
@@ -139,16 +160,22 @@ class MentalStateController {
             }
           ],
           (aggregateError, aggregateResults) => {
-            if (aggregateError) res.status(500).send(aggregateError);
-            aggregateResults.toArray().then(x => {
-              console.log(x);
-              let aggregateResults = x[0];
-              res.status(200).send({
-                daysMissed: totalDays - aggregateResults.count,
-                averageMood: Math.round(aggregateResults.averageMood),
-                daysLogged: aggregateResults.count
+            if (aggregateError) {
+              console.warn(aggregateErro);
+              res.status(500).send({
+                err: "Could not get overview information"
               });
-            });
+            } else {
+              aggregateResults.toArray().then(x => {
+                console.log(x);
+                let aggregateResults = x[0];
+                res.status(200).send({
+                  daysMissed: totalDays - aggregateResults.count,
+                  averageMood: Math.round(aggregateResults.averageMood),
+                  daysLogged: aggregateResults.count
+                });
+              });
+            }
           }
         );
       });
